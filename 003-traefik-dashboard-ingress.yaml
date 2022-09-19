@@ -24,7 +24,7 @@ spec:
       - traefik.rancherdashboard.intra
     secretName: tls-docker-registry-ui-cert
   rules:
-  - host: traefik.rancherdashboard.intra
+  - host: traefik.rancher-decktop.intra
     http:
       paths:
       - backend:
