@@ -1,0 +1,96 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kyverno-system
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: kyverno
+  namespace: kyverno-system
+spec:
+  chart: kyverno
+  repo: "https://kyverno.github.io/kyverno/"
+  targetNamespace: kyverno-system
+  valuesContent: |-
+    rbac:
+      create: true
+      serviceAccount:
+        create: true
+    networkPolicy:
+      enabled: false
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 50Mi
+    initResources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 10m
+        memory: 64Mi
+    serviceMonitor:
+      enabled: false
+      namespace: monitoring-system
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: policy-reporter
+  namespace: kyverno-system
+spec:
+  repo: "https://kyverno.github.io/policy-reporter"
+  chart: policy-reporter
+  targetNamespace: kyverno-system
+  valuesContent: |-
+    networkPolicy:
+      enabled: false
+    rest:
+      enabled: true
+    ui:
+      enabled: true
+      plugins:
+        kyverno: true
+      ingress:
+          enabled: true
+          annotations:
+            cert-manager.io/cluster-issuer: ca-issuer
+            nginx.ingress.kubernetes.io/rewrite-target: /$1
+          hosts:
+            - host: kyverno.rancher-decktop.intra
+              paths:
+              - path: "/(.*)"
+                pathType: ImplementationSpecific
+          tls:
+            - secretName: tls-kyverno-cert
+              hosts:
+                - kyverno.rancher-decktop.intra
+    kyvernoPlugin:
+      enabled: true
+    metrics:
+      enabled: false
+    monitoring:
+      enabled: false
+      grafana:
+        namespace: monitoring-system
+        dashboards:
+          enabled: true
+          label: grafana_dashboard
+    target:
+      loki:
+        # loki host address
+        host: "http://loki.logging-system:3100"
+        # minimum priority "" < info < warning < critical < error
+        minimumPriority: "warning"
+        # Skip already existing PolicyReportResults on startup
+        skipExistingOnStartup: true
+        # Send only results from the given sources
+        customLabels:
+          cluster: racher-desktop
+        sources:
+        - kyverno
+        - falco

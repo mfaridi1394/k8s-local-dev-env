@@ -3,7 +3,5 @@ provision:
   script: |
     #!/bin/sh
     cat <<'EOF' > /etc/hosts
-    127.0.0.1 traefik.rancher-decktop.intra
     127.0.0.1 registry.rancher-decktop.intra
-    127.0.0.1 docker.rancher-decktop.intra
     EOF
