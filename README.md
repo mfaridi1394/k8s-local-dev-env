@@ -1,6 +1,14 @@
+Rancher Desktop use different networking on macOS and Linux. On macOS it yuse bridge mode and on Linux it use nat mode. For a linux installation you need to use the abow Provisioning Script.
 
+
+Before you start your Rancher Desktop the first time do this:
+```bash
+mkdir -p ~/.local/share/rancher-desktop/lima/_config/
+cp 0_linux/override.yaml ~/.local/share/rancher-desktop/lima/_config/override.yaml
+```
 
 ### Local docker registry
+
 ```bash
 nerdctl login
 nerdctl pull nginx
