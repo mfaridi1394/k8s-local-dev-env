@@ -3,5 +3,6 @@ provision:
   script: |
     #!/bin/sh
     cat <<'EOF' > /etc/hosts
-    127.0.0.1 registry.rancher-decktop.intra
+    192.168.5.2 registry.rancher-decktop.intra
+    192.168.5.2 defectdojo.rancher-decktop.intra
     EOF

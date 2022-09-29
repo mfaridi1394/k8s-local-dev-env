@@ -11,7 +11,7 @@ spec:
     rbac:
       create: true
     podSecurityPolicy:
-      enabled: true
+      enabled: false
     controller:
       kind: DaemonSet
       allowSnippetAnnotations: false
@@ -25,6 +25,8 @@ spec:
         enabled: true
         default: true
         controllerValue: "k8s.io/ingress-nginx"
+      config:
+        proxy-body-size: 200m
       resources:
         limits:
           cpu: 200m
